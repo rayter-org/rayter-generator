@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{game_name}} - {{super()}}{% endblock %}
+{% block body_class %}game{% endblock %}
+{% block content %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+    <script src="/static/js/charts.js"></script>
+    
+    <script>
+        $(function() {
+            var chartInitialized = false;
+
+            $('#toggle-chart').click(function() {
+                $('#chart-container').fadeToggle();
+
+                if (!chartInitialized) {
+                    let ctx = $('#chart').get(0).getContext('2d');
+
+                    fetch('/{{name}}.json')
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(gameData) {
+                            chartInitialized = true;
+                            setupChart(ctx, gameData);
+                        });
+                }
+            });
+        });
+    </script>
+    
+    <p class="nav">
+        <a href="/">Home</a>
+        <a href="/new?game={{name}}">Add new match result</a>
+    </p>
+    <h1>{{game_name}}</h1>
+    <button id="toggle-chart">Toggle chart</button> 
+    <div id="chart-container">
+        <canvas id="chart" class="chart"></canvas>
+    </div>
+    <table>
+        <tr>
+            <th>Position</th>
+            <th>Name</th>
+            <th class="number">Number of games</th>
+            <th class="number">Rating</th>
+            <th class="number">Change</th>
+        </tr>
+        
+        {# FIXME: use a tuple with named parts instead of list indices #}
+        {% for player in players %}
+            {% if users[player[0]] and users[player[0]]["displayName"] %}
+                {% set name = users[player[0]]["displayName"] %}
+            {% else %}
+                {% set name = player[0] %}
+            {% endif %}
+            {% if users[player[0]] and users[player[0]]["imageUrl"] %}
+                {% set image_url = users[player[0]]["imageUrl"] %}
+            {% endif %}
+            <tr>
+                <td class="position">{{loop.index}}</td>
+                <td class="name avatar">
+                    {% if image_url %}
+                        <img class="user-image" src="{{image_url}}">                
+                    {% endif %}
+                    <a href="/user/{{player[0]}}">{{name}}</a>                
+                </td>
+                <td class="game_count">{{player[1]}}</td>
+                <td class="rating">{{player[2]|int}}</td>
+                <td class="delta{% if player[3] > 0 %} plus{% elif player[3] < 0 %} minus{% endif %}">{{player[3]|int}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <p class="nav">
+            <a href="https://github.com/peterjaric/rayter-games/blob/master/{{name}}.txt">View played games on GitHub</a>
+            <a href="/refresh_game/{{name}}">Refresh from Github</a>.
+        </p>
+{% endblock %}
