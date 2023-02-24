@@ -1,11 +1,12 @@
 [project]
 name = "rayter_generator"
-version = "1.0.3"
+version = "1.0.4"
 readme = "README.md"
 
 dependencies = [
     "rayter",
     "jinja2",
+    "tomli",
 ]
 
 [project.scripts]

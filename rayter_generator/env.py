@@ -1,5 +1,9 @@
 import os
-import tomllib
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
+
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -30,7 +34,7 @@ class GeneratorEnvironment:
         self.jinja_env.globals.update({
             "CONFIG": self.config,
         })
-    
+
     def render_template(self, template_path, context, output_path=None):
         contents = self.jinja_env.get_template(template_path).render(context)
         if output_path:
