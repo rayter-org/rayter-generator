@@ -10,7 +10,7 @@ from .render import render_game_page, render_index_page
 from .settings import ROOT_DIR
 
 
-def main():
+def _main(args):
     arg_parser = argparse.ArgumentParser(
         description="Generate Rayter website from game files",
     )
@@ -32,7 +32,7 @@ def main():
         help="Path to configuration file in TOML format. If not specified, will look for config file at: `./config/rayter.toml` and `./rayter.toml`",
         required=False,
     )
-    args = arg_parser.parse_args()
+    args = arg_parser.parse_args(args)
     #print(args)
 
     try:
@@ -70,6 +70,10 @@ def main():
     except FileNotFoundError as e:
         sys.stderr.write(f"Error: {e.strerror} ({e.filename})\n")
         sys.exit(1)
+
+
+def main():
+    _main(sys.argv[1:])
 
 
 if __name__ == '__main__':
