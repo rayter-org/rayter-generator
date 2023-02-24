@@ -63,6 +63,7 @@ class TestGenerator(TestCase):
             f.write(dedent("""
                 site_name = "TestName"
             """).encode("utf-8"))
+            f.flush()
 
             _main([
                 "--games-path", self.games_path.name,
