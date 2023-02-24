@@ -16,3 +16,4 @@ packages = ["rayter_generator"]
 
 [tool.setuptools.package-data]
 rayter_generator = ["static/**", "templates/**"]
+
