@@ -1,6 +1,7 @@
 [project]
 name = "rayter_generator"
 version = "1.0.3"
+readme = "README.md"
 
 dependencies = [
     "rayter",
