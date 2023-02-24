@@ -10,7 +10,7 @@ def render_game_page(env, game):
     filename = os.path.join(env.output_path, game['slug'], 'index.html')
     env.render_template("game.html", {
         "name": game["game_name"],
-        "players": game["ratings"],
+        "ratings": game["ratings"],
         "game_name": game["game_name"],
         "users": [],
         "STATIC_URL": "../static/",

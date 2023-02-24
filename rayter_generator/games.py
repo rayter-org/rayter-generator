@@ -4,7 +4,7 @@ from rayter.game_parser import GamesParser
 from rayter.rater import Rater
 
 
-def refresh_from_game_file(path, slug):
+def parse_game_file(path, slug):
     """
     Fetch game file and re-calculate ratings. If the game file does not exist, the data will be deleted.
     """
@@ -19,10 +19,7 @@ def refresh_from_game_file(path, slug):
     game = {
         "slug": slug,
         "game_name": parser.game_name,
-        "players": {
-            slug: player.rating_history
-            for (slug, player) in list(rater.players.items())
-        },
+        "rating_history": {name:player.rating_history for name, player in rater.players.items()},
         "ratings": ratings,
         "count": len(games),
         "score_type": parser.score_type

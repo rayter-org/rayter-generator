@@ -5,7 +5,7 @@ import shutil
 import sys
 
 from .env import GeneratorEnvironment
-from .games import refresh_from_game_file
+from .games import parse_game_file
 from .render import render_game_page, render_index_page
 from .settings import ROOT_DIR
 
@@ -51,7 +51,7 @@ def main():
             
             # remove .txt from filename
             slug = filename[:-4]
-            games.append(refresh_from_game_file(os.path.join(env.games_path, filename), slug))
+            games.append(parse_game_file(os.path.join(env.games_path, filename), slug))
 
         # render game pages
         for game in games:

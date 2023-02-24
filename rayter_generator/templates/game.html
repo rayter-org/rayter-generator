@@ -48,7 +48,7 @@
         </tr>
         
         {# FIXME: use a tuple with named parts instead of list indices #}
-        {% for player in players %}
+        {% for player in ratings %}
             {% if users[player[0]] and users[player[0]]["displayName"] %}
                 {% set name = users[player[0]]["displayName"] %}
             {% else %}
