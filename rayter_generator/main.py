@@ -2,7 +2,9 @@ import argparse
 import os
 import pathlib
 import shutil
+import sys
 
+from .env import GeneratorEnvironment
 from .games import refresh_from_game_file
 from .render import render_game_page, render_index_page
 from .settings import ROOT_DIR
@@ -24,34 +26,50 @@ def main():
         help="Path to directory to output rendered files",
         required=True,
     )
+    arg_parser.add_argument(
+        "--config",
+        type=pathlib.Path,
+        help="Path to configuration file in TOML format. If not specified, will look for config file at: `./config/rayter.toml` and `./rayter.toml`",
+        required=False,
+    )
     args = arg_parser.parse_args()
     #print(args)
 
-    games_path = args.games_path
-    output_path = args.output
+    try:
+        env = GeneratorEnvironment(
+            games_path=args.games_path,
+            output_path=args.output,
+            config_path=args.config,
+        )
 
-    games = []
-    for filename in os.listdir(games_path):
-        if not filename.endswith(".txt"):
-            continue
-        # remove .txt from filename
-        name = filename[:-4]
-        games.append(refresh_from_game_file(os.path.join(games_path, filename), name))
+        games = []
+        for filename in os.listdir(env.games_path):
+            if not filename.endswith(".txt"):
+                continue
+            if os.path.isdir(filename):
+                continue
+            
+            # remove .txt from filename
+            slug = filename[:-4]
+            games.append(refresh_from_game_file(os.path.join(env.games_path, filename), slug))
 
-    # render game pages
-    for game in games:
-        render_game_page(game, output_path)
+        # render game pages
+        for game in games:
+            render_game_page(env, game)
 
-    # render index page
-    render_index_page(games, output_path)
+        # render index page
+        render_index_page(env, games)
 
-    # recursively copy static files to output directory
-    print("Copying static files")
-    shutil.copytree(
-        os.path.join(ROOT_DIR, "static"), 
-        os.path.join(output_path, "static"), 
-        dirs_exist_ok=True,
-    )
+        # recursively copy static files to output directory
+        print("Copying static files")
+        shutil.copytree(
+            os.path.join(env.root_path, "static"), 
+            os.path.join(env.output_path, "static"), 
+            dirs_exist_ok=True,
+        )
+    except FileNotFoundError as e:
+        sys.stderr.write(f"Error: {e.strerror} ({e.filename})\n")
+        sys.exit(1)
 
 
 if __name__ == '__main__':
