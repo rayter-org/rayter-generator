@@ -21,6 +21,7 @@ def render_game_page(game, base_path):
             players=game["ratings"],
             game_name=game["game_name"],
             users=[],
+            STATIC_URL="../static/",
         ))
 
 
@@ -34,4 +35,5 @@ def render_index_page(games, base_path):
             users=[],
             global_chart=[],
             log=[],
+            STATIC_URL="static/",
         ))
