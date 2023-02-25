@@ -12,18 +12,20 @@ def parse_game_file(path, slug):
         content = f.read()
 
     parser = GamesParser(StringIO(content), slug)
-    games = parser.parse_file()
-    rater = Rater(games)
+    matches = parser.parse_file()
+    rater = Rater(matches)
     ratings = rater.rate_games(parser.score_type)
 
-    game = {
-        "slug": slug,
-        "game_name": parser.game_name,
-        "rating_history": {name:player.rating_history for name, player in rater.players.items()},
-        "ratings": ratings,
-        "count": len(games),
-        "score_type": parser.score_type
-    }
+    if len(matches) > 0:
+        game = {
+            "slug": slug,
+            "game_name": parser.game_name,
+            "rating_history": {name:player.rating_history for name, player in rater.players.items()},
+            "ratings": ratings,
+            "count": len(matches),
+            "score_type": parser.score_type
+        }
 
-    return game
-
+        return game
+    else:
+        return None

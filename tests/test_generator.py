@@ -8,7 +8,6 @@ from textwrap import dedent
 
 from rayter_generator.main import _main
 
-
 class TestGenerator(TestCase):
     def setUp(self):
         super().setUp()
@@ -21,12 +20,12 @@ class TestGenerator(TestCase):
                 game_name Scrabble
 
                 game 2023-02-20 17:06
-                Peter   350
-                Jonatan   320
+                PlayerOne   350
+                PlayerTwo   320
 
                 game 2023-02-24 13:00
-                Peter   346
-                Jonatan   390
+                PlayerOne   346
+                PlayerTwo   390
             """))
 
     def tearDown(self):
@@ -59,17 +58,38 @@ class TestGenerator(TestCase):
     @patch("sys.stderr", new_callable=StringIO)
     @patch("sys.stdout", new_callable=StringIO)
     def test_generate_website_with_config(self, mock_stdout, mock_stderr):
-        with NamedTemporaryFile() as f:
-            f.write(dedent("""
+        with NamedTemporaryFile() as config_file:
+            config_file.write(dedent("""
                 site_name = "TestName"
             """).encode("utf-8"))
-            f.flush()
+            config_file.flush()
 
             _main([
                 "--games-path", self.games_path.name,
                 "--output", self.output_path.name,
-                "--config", f.name,
+                "--config", config_file.name,
             ])
-            with open(os.path.join(self.output_path.name, "index.html"), "r") as f:
-                contents = f.read()
+            with open(os.path.join(self.output_path.name, "index.html"), "r") as config_file:
+                contents = config_file.read()
             self.assertIn("TestName", contents)
+
+    @patch("sys.stderr", new_callable=StringIO)
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_ignore_files_with_no_games(self, mock_stdout, mock_stderr):
+        with open(os.path.join(self.games_path.name, "sometext.txt"), "w") as text_file:
+            text_file.write(dedent("""
+                This is just some text in a file.
+            """))
+        with open(os.path.join(self.games_path.name, "epmty.txt"), "w") as empty_file:
+            empty_file.write(dedent(""))
+
+        # Should not raise an exception
+        _main([
+            "--games-path", self.games_path.name,
+            "--output", self.output_path.name,
+        ])
+
+        with open(os.path.join(self.output_path.name, "index.html"), "r") as f:
+            contents = f.read()
+        self.assertNotIn("sometext", contents)
+        self.assertNotIn("empty", contents)
