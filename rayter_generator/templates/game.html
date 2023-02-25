@@ -5,7 +5,7 @@
 {% block content %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
     <script src="/static/js/charts.js"></script>
-    
+
     <script>
         $(function() {
             var chartInitialized = false;
@@ -28,13 +28,13 @@
             });
         });
     </script>
-    
+
     <p class="nav">
         <a href="../">Home</a>
         <a href="../new?game={{name}}">Add new match result</a>
     </p>
     <h1>{{game_name}}</h1>
-    <button id="toggle-chart">Toggle chart</button> 
+    <button id="toggle-chart">Toggle chart</button>
     <div id="chart-container">
         <canvas id="chart" class="chart"></canvas>
     </div>
@@ -46,7 +46,7 @@
             <th class="number">Rating</th>
             <th class="number">Change</th>
         </tr>
-        
+
         {# FIXME: use a tuple with named parts instead of list indices #}
         {% for player in ratings %}
             {% if users[player[0]] and users[player[0]]["displayName"] %}
@@ -61,9 +61,9 @@
                 <td class="position">{{loop.index}}</td>
                 <td class="name avatar">
                     {% if image_url %}
-                        <img class="user-image" src="{{image_url}}">                
+                        <img class="user-image" src="{{image_url}}">
                     {% endif %}
-                    <a href="/user/{{player[0]}}">{{name}}</a>                
+                    <a href="/user/{{player[0]}}">{{name}}</a>
                 </td>
                 <td class="game_count">{{player[1]}}</td>
                 <td class="rating">{{player[2]|int}}</td>
@@ -72,7 +72,6 @@
         {% endfor %}
     </table>
     <p class="nav">
-            <a href="https://github.com/peterjaric/rayter-games/blob/master/{{name}}.txt">View played games on GitHub</a>
-            <a href="/refresh_game/{{name}}">Refresh from Github</a>.
-        </p>
+        <a href="https://github.com/peterjaric/rayter-games/blob/master/{{name}}.txt">View played games on GitHub</a>
+    </p>
 {% endblock %}
