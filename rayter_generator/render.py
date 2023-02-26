@@ -11,6 +11,7 @@ def render_game_page(env, game):
         "name": game["game_name"],
         "ratings": game["ratings"],
         "game_name": game["game_name"],
+        "slug": game["slug"],
         "players": [], # FIXME Fix players list
         "STATIC_URL": "../static/",
     }, output_path=filename)
