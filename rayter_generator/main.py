@@ -43,6 +43,7 @@ def _main(args):
         )
 
         games = []
+        # Create game list from game files
         for filename in os.listdir(env.games_path):
             if not filename.endswith(".txt"):
                 continue
@@ -51,7 +52,9 @@ def _main(args):
             
             # remove .txt from filename
             slug = filename[:-4]
-            games.append(parse_game_file(os.path.join(env.games_path, filename), slug))
+            game = parse_game_file(os.path.join(env.games_path, filename), slug)
+            if game != None:
+                games.append(game)
 
         # render game pages
         for game in games:
