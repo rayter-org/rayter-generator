@@ -49,21 +49,21 @@
 
         {# FIXME: use a tuple with named parts instead of list indices #}
         {% for player in ratings %}
-            {% if users[player[0]] and users[player[0]]["displayName"] %}
-                {% set name = users[player[0]]["displayName"] %}
+            {% if players[player[0]] and players[player[0]]["displayName"] %}
+                {% set name = players[player[0]]["displayName"] %}
             {% else %}
                 {% set name = player[0] %}
             {% endif %}
-            {% if users[player[0]] and users[player[0]]["imageUrl"] %}
-                {% set image_url = users[player[0]]["imageUrl"] %}
+            {% if players[player[0]] and players[player[0]]["imageUrl"] %}
+                {% set image_url = players[player[0]]["imageUrl"] %}
             {% endif %}
             <tr>
                 <td class="position">{{loop.index}}</td>
                 <td class="name avatar">
                     {% if image_url %}
-                        <img class="user-image" src="{{image_url}}">
+                        <img class="player-image" src="{{image_url}}">
                     {% endif %}
-                    <a href="/user/{{player[0]}}">{{name}}</a>
+                    <a href="/player/{{player[0]}}">{{name}}</a>
                 </td>
                 <td class="game_count">{{player[1]}}</td>
                 <td class="rating">{{player[2]|int}}</td>

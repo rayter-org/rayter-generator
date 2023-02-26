@@ -6,7 +6,8 @@ import sys
 
 from .env import GeneratorEnvironment
 from .games import parse_game_file
-from .render import render_game_page, render_index_page
+from .players import get_players
+from .render import render_game_page, render_index_page, render_player_page
 from .settings import ROOT_DIR
 
 
@@ -49,7 +50,7 @@ def _main(args):
                 continue
             if os.path.isdir(filename):
                 continue
-            
+
             # remove .txt from filename
             slug = filename[:-4]
             game = parse_game_file(os.path.join(env.games_path, filename), slug)
@@ -60,14 +61,21 @@ def _main(args):
         for game in games:
             render_game_page(env, game)
 
+        # Get players
+        players = get_players(games, env)
+
+        # render player pages
+        for player in players.values():
+            render_player_page(env, player)
+
         # render index page
         render_index_page(env, games)
 
         # recursively copy static files to output directory
         print("Copying static files")
         shutil.copytree(
-            os.path.join(env.root_path, "static"), 
-            os.path.join(env.output_path, "static"), 
+            os.path.join(env.root_path, "static"),
+            os.path.join(env.output_path, "static"),
             dirs_exist_ok=True,
         )
     except FileNotFoundError as e:

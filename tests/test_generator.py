@@ -49,7 +49,7 @@ class TestGenerator(TestCase):
 
         with open(os.path.join(self.output_path.name, "scrabble", "index.html"), "r") as f:
             contents = f.read()
-        self.assertIn("Jonatan", contents)
+        self.assertIn("PlayerOne", contents)
 
         mock_stdout.seek(0)
         mock_stderr.seek(0)
@@ -93,3 +93,15 @@ class TestGenerator(TestCase):
             contents = f.read()
         self.assertNotIn("sometext", contents)
         self.assertNotIn("empty", contents)
+
+    @patch("sys.stderr", new_callable=StringIO)
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_generate_player_pages(self, mock_stdout, mock_stderr):
+        _main([
+            "--games-path", self.games_path.name,
+            "--output", self.output_path.name,
+        ])
+
+        with open(os.path.join(self.output_path.name, "player", "PlayerOne", "index.html"), "r") as f:
+            contents = f.read()
+        self.assertIn("Scrabble", contents)
