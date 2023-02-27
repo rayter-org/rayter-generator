@@ -39,7 +39,7 @@ def get_players(games, env):
 
 
 
-    # if players_metadata != None:
+    # if players_metadata is not None:
     #     players = players_result["players"]
 
     #     # Overwrite generic player values with player metadata

@@ -54,7 +54,7 @@ def _main(args):
             # remove .txt from filename
             slug = filename[:-4]
             game = parse_game_file(os.path.join(env.games_path, filename), slug)
-            if game != None:
+            if game is not None:
                 games.append(game)
 
         # render game pages
