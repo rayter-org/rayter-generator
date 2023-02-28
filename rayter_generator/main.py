@@ -33,6 +33,12 @@ def _main(args):
         help="Path to configuration file in TOML format. If not specified, will look for config file at: `./config/rayter.toml` and `./rayter.toml`",
         required=False,
     )
+    arg_parser.add_argument(
+        "--players",
+        type=pathlib.Path,
+        help="Path to player metadata file in JSON format. If not specified, will look for players file at: `./config/players.json` and `./players.json`",
+        required=False,
+    )
     args = arg_parser.parse_args(args)
     #print(args)
 
@@ -41,6 +47,7 @@ def _main(args):
             games_path=args.games_path,
             output_path=args.output,
             config_path=args.config,
+            players_path=args.players,
         )
 
         games = []

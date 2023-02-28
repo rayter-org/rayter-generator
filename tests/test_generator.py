@@ -28,6 +28,15 @@ class TestGenerator(TestCase):
                 PlayerTwo   390
             """))
 
+        with open(os.path.join(self.output_path.name, "players_metadata.json"), "w") as f:
+            f.write(dedent("""
+                {
+                    "PlayerOne": {
+                        "displayName": "Player One DisplayName"
+                    }
+                }
+            """))
+
     def tearDown(self):
         self.games_path.cleanup()
         self.output_path.cleanup()
@@ -105,3 +114,16 @@ class TestGenerator(TestCase):
         with open(os.path.join(self.output_path.name, "player", "PlayerOne", "index.html"), "r") as f:
             contents = f.read()
         self.assertIn("Scrabble", contents)
+
+    @patch("sys.stderr", new_callable=StringIO)
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_player_metadata(self, mock_stdout, mock_stderr):
+        _main([
+            "--games-path", self.games_path.name,
+            "--output", self.output_path.name,
+            "--players", os.path.join(self.output_path.name, "players_metadata.json"),
+        ])
+
+        with open(os.path.join(self.output_path.name, "player", "PlayerOne", "index.html"), "r") as f:
+            contents = f.read()
+        self.assertIn("Player One DisplayName", contents)

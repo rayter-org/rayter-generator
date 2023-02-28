@@ -1,3 +1,6 @@
+import hashlib
+import urllib
+
 def create_player_from_games(name, games):
 
     ratings = []
@@ -27,10 +30,32 @@ def create_player_from_games(name, games):
 
     return player
 
+# Creates an image url for a player. If the player has an email, use gravatar. Otherwise use a generated avatar.
+def make_image_url(player):
+    # Don't override explicit imageUrl
+    if 'imageUrl' in player:
+        return player['imageUrl']
+
+    size = 300
+    # fallbackImageUrl = 'https://ui-avatars.com/api/?background=random&name=' + player['name'] + '&size=' + str(size)
+    fallbackImageUrl = 'https://api.multiavatar.com/' + player['name'] + '.svg'
+
+    if 'email' in player:
+        email = player['email']
+        hash = hashlib.md5(email.lower().encode("utf-8")).hexdigest()
+        gravatar_url = "https://www.gravatar.com/avatar/" + hash + "?"
+        gravatar_url += urllib.parse.urlencode({
+            's': str(size),
+            'd': fallbackImageUrl
+        })
+        return gravatar_url
+    else:
+        return fallbackImageUrl
+
 
 def get_players(games, env):
     players = {}
-    players_metadata = {} # env.players_metadata
+    players_metadata = env.players_metadata
 
     for game in games:
         for player in game["ratings"]:
@@ -38,20 +63,18 @@ def get_players(games, env):
             if not name in players:
                 players[name] = create_player_from_games(name, games)
 
+    # Overwrite generic player values with player metadata from file
+    if players_metadata != None:
+        for player_name in players_metadata.keys():
+            # If player exists in players, update it with all values in the player's metadata
+            if player_name in players:
+                player_metadata = players_metadata[player_name]
+                players[player_name].update(player_metadata)
 
-
-    # if players_metadata is not None:
-    #     players = players_result["players"]
-
-    #     # Overwrite generic player values with player metadata
-    #     for player in players:
-    #         players[player["playerName"]] = player
-
-    #     # For every player, if they have no image add gravatar image or generated avatar
-    #     for player in players:
-    #         player = players[player]
-    #         if not 'imageUrl' in player:
-    #             player['imageUrl'] = make_image_url(player)
-
+        # For every player, if they have no image add gravatar image or generated avatar
+        for player_name in players.keys():
+            player = players[player_name]
+            if not 'imageUrl' in player:
+                player['imageUrl'] = make_image_url(player)
 
     return players

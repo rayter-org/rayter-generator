@@ -147,6 +147,7 @@ td.avatar {
 
 .player-image {
   border-radius: 30%;
+  max-width: 300px;
 }
 
 h2 {
