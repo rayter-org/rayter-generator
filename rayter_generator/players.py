@@ -35,7 +35,8 @@ def get_players(games, env):
     for game in games:
         for player in game["ratings"]:
             name = player[0]
-            players[name] = create_player_from_games(name, games)
+            if not name in players:
+                players[name] = create_player_from_games(name, games)
 
 
 
