@@ -42,8 +42,8 @@ function setupChart(ctx, gameData) {
   var myLineChart = new Chart(ctx, {
     type: "line",
     data: {
-      datasets: Object.keys(gameData.players).map(function(name, index) {
-        let history = gameData.players[name];
+      datasets: Object.keys(gameData.rating_history).map(function(name, index) {
+        let history = gameData.rating_history[name];
         let theColor = color({ dataIndex: index });
 
         return {

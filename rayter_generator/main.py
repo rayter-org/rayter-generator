@@ -7,7 +7,7 @@ import sys
 from .env import GeneratorEnvironment
 from .games import parse_game_file
 from .players import get_players
-from .render import render_game_page, render_index_page, render_player_page
+from .render import render_game_page, render_index_page, render_player_page, render_game_json
 from .settings import ROOT_DIR
 
 
@@ -67,6 +67,10 @@ def _main(args):
         # render game pages
         for game in games:
             render_game_page(env, game)
+
+        # render game json
+        for game in games:
+            render_game_json(env, game)
 
         # Get players
         players = get_players(games, env)

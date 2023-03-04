@@ -16,7 +16,7 @@
                 if (!chartInitialized) {
                     let ctx = $('#chart').get(0).getContext('2d');
 
-                    fetch('/{{name}}.json')
+                    fetch('game.json')
                         .then(function(response) {
                             return response.json();
                         })

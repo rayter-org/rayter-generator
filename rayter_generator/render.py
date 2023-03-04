@@ -1,4 +1,5 @@
 import os
+import json
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -15,6 +16,12 @@ def render_game_page(env, game):
         "players": [], # FIXME Fix players list
         "STATIC_URL": "../static/",
     }, output_path=filename)
+
+
+def render_game_json(env, game):
+    filename = os.path.join(env.output_path, game['slug'], 'game.json')
+    with open(filename, 'w') as f:
+        json.dump(game, f)
 
 def render_player_page(env, player):
     filename = os.path.join(env.output_path, 'player', player['slug'], 'index.html')

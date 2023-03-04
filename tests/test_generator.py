@@ -127,3 +127,17 @@ class TestGenerator(TestCase):
         with open(os.path.join(self.output_path.name, "player", "PlayerOne", "index.html"), "r") as f:
             contents = f.read()
         self.assertIn("Player One DisplayName", contents)
+
+    @patch("sys.stderr", new_callable=StringIO)
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_generate_game_json(self, mock_stdout, mock_stderr):
+        _main([
+            "--games-path", self.games_path.name,
+            "--output", self.output_path.name,
+        ])
+        self.assertTrue(os.path.exists(os.path.join(self.output_path.name, "scrabble", "game.json")))
+
+        with open(os.path.join(self.output_path.name, "scrabble", "game.json"), "r") as f:
+            contents = f.read()
+        self.assertIn("PlayerOne", contents)
+        self.assertIn("rating_history", contents)
