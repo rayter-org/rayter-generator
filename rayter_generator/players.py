@@ -36,21 +36,18 @@ def make_image_url(player):
     if 'imageUrl' in player:
         return player['imageUrl']
 
-    size = 300
-    # fallbackImageUrl = 'https://ui-avatars.com/api/?background=random&name=' + player['name'] + '&size=' + str(size)
-    fallbackImageUrl = 'https://api.multiavatar.com/' + player['name'] + '.svg'
+    gravatar_size = 300
 
     if 'email' in player:
         email = player['email']
         hash = hashlib.md5(email.lower().encode("utf-8")).hexdigest()
         gravatar_url = "https://www.gravatar.com/avatar/" + hash + "?"
         gravatar_url += urllib.parse.urlencode({
-            's': str(size),
-            'd': fallbackImageUrl
+            's': str(gravatar_size)
         })
         return gravatar_url
     else:
-        return fallbackImageUrl
+        return None
 
 
 def get_players(games, env):
@@ -71,7 +68,7 @@ def get_players(games, env):
                 player_metadata = players_metadata[player_name]
                 players[player_name].update(player_metadata)
 
-        # For every player, if they have no image add gravatar image or generated avatar
+        # For every player, if they have no image url, try to create one from their metadata
         for player_name in players.keys():
             player = players[player_name]
             if not 'imageUrl' in player:

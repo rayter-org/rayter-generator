@@ -141,3 +141,15 @@ class TestGenerator(TestCase):
             contents = f.read()
         self.assertIn("PlayerOne", contents)
         self.assertIn("rating_history", contents)
+
+
+    @patch("sys.stderr", new_callable=StringIO)
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_generate_player_images(self, mock_stdout, mock_stderr):
+        _main([
+            "--games-path", self.games_path.name,
+            "--output", self.output_path.name,
+        ])
+
+        self.assertTrue(os.path.exists(os.path.join(self.output_path.name, "player", "PlayerOne", "image.png")))
+        self.assertTrue(os.path.exists(os.path.join(self.output_path.name, "player", "PlayerTwo", "image.png")))

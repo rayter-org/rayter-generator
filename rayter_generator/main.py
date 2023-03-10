@@ -7,8 +7,7 @@ import sys
 from .env import GeneratorEnvironment
 from .games import parse_game_file
 from .players import get_players
-from .render import render_game_page, render_index_page, render_player_page, render_game_json
-from .settings import ROOT_DIR
+from .render import render_game_page, render_index_page, render_player_page, render_game_json, render_player_image
 
 
 def _main(args):
@@ -40,7 +39,6 @@ def _main(args):
         required=False,
     )
     args = arg_parser.parse_args(args)
-    #print(args)
 
     try:
         env = GeneratorEnvironment(
@@ -64,23 +62,27 @@ def _main(args):
             if game is not None:
                 games.append(game)
 
-        # render game pages
-        for game in games:
-            render_game_page(env, game)
-
-        # render game json
-        for game in games:
-            render_game_json(env, game)
-
         # Get players
         players = get_players(games, env)
+
+        # render player images, with the side effect of adding image filenames to players
+        for player in players.values():
+            render_player_image(env, player)
 
         # render player pages
         for player in players.values():
             render_player_page(env, player)
 
+        # render game pages
+        for game in games:
+            render_game_page(env, game, players)
+
+        # render game json
+        for game in games:
+            render_game_json(env, game)
+
         # render index page
-        render_index_page(env, games)
+        render_index_page(env, games, players)
 
         # recursively copy static files to output directory
         print("Copying static files")

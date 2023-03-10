@@ -27,8 +27,9 @@
                     {% else %}
                         {% set leader_name = leader %}
                     {% endif %}
-                    {% if leader in players and 'imageUrl' in players[leader] %}
-                        {% set image_url = players[leader]['imageUrl'] %}
+                    {% if leader in players and 'image' in players[leader] %}
+                        {% set image_path = "../player/" + players[leader]["name"] %}
+                        {% set image_url = image_path + "/" + players[leader]["image"] %}
                     {% endif %}
                     <tr>
                         <td class="name">
@@ -37,6 +38,7 @@
                         <td class="name avatar">
                             {% if game.ratings|length > 0 %}
                                 {% if image_url %}
+
                                     <img class="player-image" src="{{image_url}}">
                                 {% endif %}
                                 <a href="/player/{{leader}}">{{ leader_name }}</a>
