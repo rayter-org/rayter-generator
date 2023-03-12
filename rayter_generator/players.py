@@ -2,7 +2,6 @@ import hashlib
 import urllib
 
 def create_player_from_games(name, games):
-
     ratings = []
 
     for game in games:
@@ -16,11 +15,6 @@ def create_player_from_games(name, games):
 
     # Sort ratings by rating, best first. The actual rating is the third element in the tuple.
     ratings.sort(key=lambda rating: int(rating[2]), reverse=True)
-
-    # FIXME: (?)
-    # All games are traversed twice, first in the loop above and then inside
-    # get_games_and_toplist(), maybe they can be combined?
-# (games, global_chart) = get_games_and_toplist()
 
     player = {
         "name": name,
@@ -50,10 +44,11 @@ def make_image_url(player):
         return None
 
 
-def get_players(games, env):
+def get_all_players(games, env):
     players = {}
     players_metadata = env.players_metadata
 
+    # Collect all players from all games
     for game in games:
         for player in game["ratings"]:
             name = player[0]
@@ -69,6 +64,7 @@ def get_players(games, env):
                 players[player_name].update(player_metadata)
 
         # For every player, if they have no image url, try to create one from their metadata
+        # FIXME: Should this be moved into create_player_from_games()?
         for player_name in players.keys():
             player = players[player_name]
             if not 'imageUrl' in player:

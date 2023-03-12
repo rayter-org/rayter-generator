@@ -58,14 +58,17 @@
                     <th>Name</th>
                     <th>Average placement</th>
                 </tr>
-                {% for name, rating in global_chart %}
+                {% for placement in global_chart %}
+                    {% set name = placement["player_name"] %}
+                    {% set rating = placement["average"] %}
                     {% if name in players and 'displayName' in players[name] %}
                         {% set display_name = players[name]['displayName'] %}
                     {% else %}
                         {% set display_name = name %}
                     {% endif %}
-                    {% if name in players and 'imageUrl' in players[name] %}
-                        {% set image_url = players[name]['imageUrl'] %}
+                    {% if name in players and 'image' in players[name] %}
+                        {% set image_path = "../player/" + players[name]["name"] %}
+                        {% set image_url = image_path + "/" + players[name]["image"] %}
                     {% endif %}
                     <tr>
                         <td class="position">{{ loop.index }}</td>
@@ -97,20 +100,6 @@
                 that a game where the player has played many matches will count more towards
                 the average than a match where the player only played a few matches.
             </p>
-        </div>
-
-        <div id="event-log">
-            <h2>Events</h2>
-            <table>
-                <tr>
-                    <th>Event</th>
-                </tr>
-                {% for message in log %}
-                    <tr>
-                        <td >{{ message }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
         </div>
     </div>
 {% endblock %}

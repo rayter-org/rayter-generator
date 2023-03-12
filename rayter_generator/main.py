@@ -5,10 +5,10 @@ import shutil
 import sys
 
 from .env import GeneratorEnvironment
-from .games import parse_game_file
-from .players import get_players
+from .games import get_games
+from .players import get_all_players
 from .render import render_game_page, render_index_page, render_player_page, render_game_json, render_player_image
-
+from .global_chart import get_global_chart
 
 def _main(args):
     arg_parser = argparse.ArgumentParser(
@@ -48,22 +48,14 @@ def _main(args):
             players_path=args.players,
         )
 
-        games = []
-        # Create game list from game files
-        for filename in os.listdir(env.games_path):
-            if not filename.endswith(".txt"):
-                continue
-            if os.path.isdir(filename):
-                continue
+        # get games
+        games = get_games(env)
 
-            # remove .txt from filename
-            slug = filename[:-4]
-            game = parse_game_file(os.path.join(env.games_path, filename), slug)
-            if game is not None:
-                games.append(game)
+        # get players
+        players = get_all_players(games, env)
 
-        # Get players
-        players = get_players(games, env)
+        # get global chart
+        global_chart = get_global_chart(games)
 
         # render player images, with the side effect of adding image filenames to players
         for player in players.values():
@@ -82,7 +74,7 @@ def _main(args):
             render_game_json(env, game)
 
         # render index page
-        render_index_page(env, games, players)
+        render_index_page(env, games, players, global_chart)
 
         # recursively copy static files to output directory
         print("Copying static files")
@@ -94,6 +86,7 @@ def _main(args):
     except FileNotFoundError as e:
         sys.stderr.write(f"Error: {e.strerror} ({e.filename})\n")
         sys.exit(1)
+
 
 
 def main():

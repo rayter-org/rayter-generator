@@ -30,6 +30,8 @@ def render_player_page(env, player):
         "STATIC_URL": "../../static/",
     }, output_path=filename)
 
+# FIXME: This function is quite long. Should the main parts be broken out into
+#        a separate file?
 def render_player_image(env, player):
     dir_path = os.path.join(env.output_path, 'player', player['slug'])
     # Ensure the player folder exists.
@@ -118,13 +120,13 @@ def render_player_image(env, player):
     # Update the player record with the new filename.
     player['image'] = filename
 
-def render_index_page(env, games, players):
+def render_index_page(env, games, players, global_chart):
     games.sort(key=lambda g: g["count"], reverse=True)
     filename = os.path.join(env.output_path, 'index.html')
     env.render_template("index.html", {
         "games": games,
         "players": players,
-        "global_chart": [],
+        "global_chart": global_chart,
         "log": [],
         "STATIC_URL": "static/",
     }, output_path=filename)

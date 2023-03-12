@@ -1,4 +1,5 @@
 from io import StringIO
+import os
 
 from rayter.game_parser import GamesParser
 from rayter.rater import Rater
@@ -29,3 +30,22 @@ def parse_game_file(path, slug):
         return game
     else:
         return None
+
+def get_games(env):
+    games = []
+
+     # Create game list from game files
+    for filename in os.listdir(env.games_path):
+        if not filename.endswith(".txt"):
+            continue
+        if os.path.isdir(filename):
+            continue
+
+        # remove .txt from filename
+        slug = filename[:-4]
+        game = parse_game_file(os.path.join(env.games_path, filename), slug)
+
+        if game is not None:
+            games.append(game)
+
+    return games
