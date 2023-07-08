@@ -22,5 +22,5 @@ This is more a set of notes than a full-fledged guide.
 * Push commits and tag.
 * Wait for https://github.com/rayter-org/rayter-generator/actions to build.
 * Optionally: ask someone to code review.
-* Click "Run workflow" on https://github.com/<your user>/<your games repo>/actions/workflows/build.yml.
+* Click "Run workflow" on `https://github.com/<your user>/<your games repo>/actions/workflows/build.yml`.
 * Go to https://rayter.win to see the result.
