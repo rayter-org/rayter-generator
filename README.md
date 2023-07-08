@@ -8,14 +8,14 @@ A static site generator for game ranking leagues.
 
 This is more a set of notes than a full-fledged guide.
 
-## Get started
+### Get started
 `pip install -e .`
 
 `rayter-generate-website --games-path <path to games folder> --output <output folder>`
 
 `python3 -m http.server 8000` in output folder.
 
-## When done with change
+### When done with change
 * Commit change
 * Bump version in pyproject.toml
 * `git tag <same version>`
