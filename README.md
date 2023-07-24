@@ -17,7 +17,7 @@ This is more a set of notes than a full-fledged guide.
 
 ### When done with change
 * Commit change.
-* Bump version in pyproject.toml.
+* Bump version in pyproject.toml and commit.
 * `git tag <same version>`
 * Push commits and tag.
 * Wait for https://github.com/rayter-org/rayter-generator/actions to build.
