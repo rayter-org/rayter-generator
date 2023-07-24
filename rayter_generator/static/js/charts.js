@@ -38,6 +38,26 @@ function color(context) {
   return c;
 }
 
+const SHOW_ALL = 'Show all';
+const HIDE_ALL = 'Hide all';
+
+/**
+ *  Sets label to "Show all" or "Hide all" depending on state
+ */
+function updateToggleAllLabel(showAll) {
+  document.getElementById('toggle-all').innerHTML = showAll ? SHOW_ALL : HIDE_ALL;
+}
+
+function isAnyLineHidden(chart) {
+  let anyIsHidden = false;
+
+  chart.data.datasets.forEach(function (ds, index) {
+    if (chart.getDatasetMeta(index).hidden)
+      anyIsHidden = true;
+  });
+  return anyIsHidden;
+}
+
 function setupChart(ctx, gameData) {
   const DEFAULT_LINE_WIDTH = 3;
 
@@ -112,6 +132,22 @@ function setupChart(ctx, gameData) {
               datasets[i].borderWidth = DEFAULT_LINE_WIDTH;
             }
             chart.update();
+          },
+          onClick: (evt, legendItem, legend) => {
+            // Default legend onClick from https://www.chartjs.org/docs/latest/configuration/legend.html#custom-on-click-actions
+            const index = legendItem.datasetIndex;
+            const ci = legend.chart;
+            if (ci.isDatasetVisible(index)) {
+                ci.hide(index);
+                legendItem.hidden = true;
+            } else {
+                ci.show(index);
+                legendItem.hidden = false;
+            }
+            // End default legend onClick
+
+            // Make sure the toggle all label is correct
+            updateToggleAllLabel(isAnyLineHidden(chart));
           }
         }
       },
@@ -124,36 +160,33 @@ function setupChart(ctx, gameData) {
     }
   });
 
-
-  // Toggles all lines on/off
-  // If at least one line is hidden, show all lines
-  // If all lines are shown, hide all lines
+  /**
+   *  Toggles all lines on/off
+   *If at least one line is hidden, show all lines
+   * If all lines are shown, hide all lines
+   */
   let showHideAllLines = function() {
-    let anyIsHidden = false;
+    let anyIsHidden = isAnyLineHidden(chart);
 
     chart.data.datasets.forEach(function(ds, index) {
-      if (chart.getDatasetMeta(index).hidden)
-        anyIsHidden = true;
-    });
-
-    chart.data.datasets.forEach(function(ds, index) {
-      chart.getDatasetMeta(index).hidden=!anyIsHidden;
+      chart.getDatasetMeta(index).hidden = !anyIsHidden;
     });
     chart.update();
+
+    updateToggleAllLabel(isAnyLineHidden(chart));
   }
 
+  updateToggleAllLabel(false);
   document.getElementById('toggle-all').addEventListener('click', showHideAllLines);
 
   return chart;
 }
 
 $(function() {
-  var chartInitialized = false;
+  var firstTime = true;
 
   $('#toggle-chart').click(function() {
-    $('#chart-container').fadeToggle();
-
-      if (!chartInitialized) {
+      if (firstTime) {
           let ctx = $('#chart').get(0).getContext('2d');
 
           fetch('game.json')
@@ -161,9 +194,15 @@ $(function() {
                   return response.json();
               })
               .then(function(gameData) {
-                  chartInitialized = true;
+                  firstTime = false;
                   setupChart(ctx, gameData);
+                  $('#chart-container').fadeToggle();
+                })
+              .catch(function(error) {
+                console.error('Could not load game data', error);
               });
+      } else {
+          $('#chart-container').fadeToggle();
       }
   });
 });
