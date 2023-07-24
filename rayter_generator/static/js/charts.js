@@ -161,11 +161,11 @@ function setupChart(ctx, gameData) {
   });
 
   /**
-   *  Toggles all lines on/off
-   *If at least one line is hidden, show all lines
+   * Toggles all lines on/off
+   * If at least one line is hidden, show all lines
    * If all lines are shown, hide all lines
    */
-  let showHideAllLines = function() {
+  let showHideAllLines = function(event) {
     let anyIsHidden = isAnyLineHidden(chart);
 
     chart.data.datasets.forEach(function(ds, index) {
@@ -174,6 +174,8 @@ function setupChart(ctx, gameData) {
     chart.update();
 
     updateToggleAllLabel(isAnyLineHidden(chart));
+
+    event.preventDefault();
   }
 
   updateToggleAllLabel(false);
