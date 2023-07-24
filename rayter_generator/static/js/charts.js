@@ -152,7 +152,6 @@ $(function() {
 
   $('#toggle-chart').click(function() {
     $('#chart-container').fadeToggle();
-    $('#chart-controls').fadeToggle();
 
       if (!chartInitialized) {
           let ctx = $('#chart').get(0).getContext('2d');
