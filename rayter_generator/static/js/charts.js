@@ -38,14 +38,20 @@ function color(context) {
   return c;
 }
 
-const SHOW_ALL = 'Show all';
-const HIDE_ALL = 'Hide all';
+const SHOW_ALL = 'Show all players';
+const HIDE_ALL = 'Hide all players';
+const SHOW_LAST = 'Show players in last match';
 
 /**
  *  Sets label to "Show all" or "Hide all" depending on state
  */
-function updateToggleAllLabel(showAll) {
+function updateToggleLabels(showAll, showLast) {
   document.getElementById('toggle-all').innerHTML = showAll ? SHOW_ALL : HIDE_ALL;
+  document.getElementById('toggle-last').innerHTML = showLast ? SHOW_LAST : SHOW_ALL;
+
+  // Don't show the "Show last match" button with SHOW_ALL label if the show all
+  // button will show the same thing
+  document.getElementById('toggle-last').style.display = document.getElementById('toggle-all').innerHTML == document.getElementById('toggle-last').innerHTML ? 'none' : 'inline';
 }
 
 function isAnyLineHidden(chart) {
@@ -147,7 +153,7 @@ function setupChart(ctx, gameData) {
             // End default legend onClick
 
             // Make sure the toggle all label is correct
-            updateToggleAllLabel(isAnyLineHidden(chart));
+            updateToggleLabels(isAnyLineHidden(chart), true);
           }
         }
       },
@@ -173,13 +179,62 @@ function setupChart(ctx, gameData) {
     });
     chart.update();
 
-    updateToggleAllLabel(isAnyLineHidden(chart));
+    updateToggleLabels(isAnyLineHidden(chart), true);
 
     event.preventDefault();
   }
 
-  updateToggleAllLabel(false);
+  /**
+   * Toggles showing only lines from the last match on/off
+   * If the last match is shown, show all lines
+   * Otherwise, show the last match
+   */
+  let showHideLast = function(event) {
+    // For every player find the index of theirs last match
+    let lastMatchIndex = Object.keys(gameData.rating_history).reduce(function(acc, name) {
+      let history = gameData.rating_history[name];
+      let lastMatch = Object.keys(history).reduce(function(acc, matchNumber) {
+        return Math.max(acc, matchNumber);
+      }, 0);
+      return Math.max(acc, lastMatch);
+    }, 0);
+
+    // Find all players who played in the last match
+    let playersToShow = Object.keys(gameData.rating_history).filter(function(name) {
+      let history = gameData.rating_history[name];
+      return Object.keys(history).includes(lastMatchIndex.toString());
+    });
+
+    // Check if these players are exactly the ones that are shown
+    let matchesPlayersToShow = true;
+    chart.data.datasets.forEach(function(ds, index) {
+      let name = ds.label;
+      let isShown = !chart.getDatasetMeta(index).hidden;
+
+      if (playersToShow.includes(name) != isShown) {
+        matchesPlayersToShow = false;
+      }
+    });
+
+    // If the players are exactly the ones that are shown, show all lines
+    // Otherwise, show only the players in the last match
+    chart.data.datasets.forEach(function(ds, index) {
+      let name = ds.label;
+      chart.getDatasetMeta(index).hidden = matchesPlayersToShow ? false : !playersToShow.includes(name);
+    });
+
+    chart.update();
+
+    // matchPlayersToShow tells if all players in the last match were shown *before* our update and
+    // is now the opposite of that
+    updateToggleLabels(isAnyLineHidden(chart), matchesPlayersToShow);
+
+    event.preventDefault();
+  }
+
+  updateToggleLabels(false, true);
   document.getElementById('toggle-all').addEventListener('click', showHideAllLines);
+  document.getElementById('toggle-last').addEventListener('click', showHideLast);
 
   return chart;
 }

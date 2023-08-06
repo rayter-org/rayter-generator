@@ -224,8 +224,16 @@ a:hover {
   padding-right: 30px;
 }
 
-#toggle-all {
+#chart-controls a {
   text-decoration: underline;
+  padding-left: 5px;
+}
+
+#chart-controls a:not(:first-child)::before {
+  content: ' - ';
+  text-decoration: none;
+  display: inline-block;
+  padding: 0 5px;
 }
 
 button {
