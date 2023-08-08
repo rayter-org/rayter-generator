@@ -36,6 +36,7 @@ class GeneratorEnvironment:
         else:
             self.config = {
                 "site_name": "Rayter",
+                "site_description": "Find game ratings for our games here!",
             }
 
         if self.players_path:
