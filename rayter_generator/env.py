@@ -27,17 +27,18 @@ class GeneratorEnvironment:
         self.players_path = players_path
         self.root_path = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
+        self.config = {}
         if self.config_path:
             self.config = get_toml(self.config_path)
         elif os.path.exists("./config/rayter.toml"):
             self.config = get_toml("./config/rayter.toml")
         elif os.path.exists("./rayter.toml"):
             self.config = get_toml("./rayter.toml")
-        else:
-            self.config = {
-                "site_name": "Rayter",
-                "site_description": "Find game ratings for our games here!",
-            }
+
+        if "site_name" not in self.config:
+            self.config["site_name"] = "Rayter"
+        if "site_description" not in self.config:
+            self.config["site_description"] = "Find game ratings for our games here!"
 
         if self.players_path:
             self.players_metadata = get_json(self.players_path)
