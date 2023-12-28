@@ -4,7 +4,7 @@
 {% block body_class %}game{% endblock %}
 {% block content %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0"></script>
-    <script src="/static/js/charts.js"></script>
+    <script src="{{ STATIC_URL }}js/charts.js"></script>
 
     <div class="nav">
         <a href="../">Home</a>
@@ -47,7 +47,7 @@
                     {% if image_url %}
                         <img class="player-image" src="{{image_url}}">
                     {% endif %}
-                    <a href="/player/{{player[0]}}">{{name}}</a>
+                    <a href="../player/{{player[0]}}">{{name}}</a>
                 </td>
                 <td class="game_count">{{player[1]}}</td>
                 <td class="rating">{{player[2]|int}}</td>

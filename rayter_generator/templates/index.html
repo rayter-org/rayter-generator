@@ -28,7 +28,7 @@
                         {% set leader_name = leader %}
                     {% endif %}
                     {% if leader in players and 'image' in players[leader] %}
-                        {% set image_path = "../player/" + players[leader]["name"] %}
+                        {% set image_path = "player/" + players[leader]["name"] %}
                         {% set image_url = image_path + "/" + players[leader]["image"] %}
                     {% endif %}
                     <tr>
@@ -41,7 +41,7 @@
 
                                     <img class="player-image" src="{{image_url}}">
                                 {% endif %}
-                                <a href="/player/{{leader}}">{{ leader_name }}</a>
+                                <a href="player/{{leader}}">{{ leader_name }}</a>
                             {% endif %}</td>
                         <td class="number">{% if game.ratings|length > 0 %}{{ game.ratings[0][2]|int }}{% endif %}</td>
                         <td class="count number">{{ game.count }}</td>
@@ -67,7 +67,7 @@
                         {% set display_name = name %}
                     {% endif %}
                     {% if name in players and 'image' in players[name] %}
-                        {% set image_path = "../player/" + players[name]["name"] %}
+                        {% set image_path = "player/" + players[name]["name"] %}
                         {% set image_url = image_path + "/" + players[name]["image"] %}
                     {% endif %}
                     <tr>
@@ -76,7 +76,7 @@
                             {% if image_url %}
                                 <img class="player-image" src="{{image_url}}">
                             {% endif %}
-                            <a href="/player/{{name}}">{{ display_name }}</a>
+                            <a href="player/{{name}}">{{ display_name }}</a>
                         </td>
                         {% set percent = 100 - rating * 100 %}
                         <td class="rating">
